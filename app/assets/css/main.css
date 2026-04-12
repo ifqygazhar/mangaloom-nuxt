@@ -9,9 +9,9 @@
   --color-surface-hover: #3a3a3a;
 
   /* ── Accent ───────────────────────────────────────── */
-  --color-accent: #6C5CE7;
-  --color-accent-hover: #7C6DF7;
-  --color-accent-muted: rgba(108, 92, 231, 0.15);
+  --color-accent: #FACC15;
+  --color-accent-hover: #FDE047;
+  --color-accent-muted: rgba(250, 204, 21, 0.15);
 
   /* ── Text ─────────────────────────────────────────── */
   --color-text-primary: #F0F0F0;
