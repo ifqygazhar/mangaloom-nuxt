@@ -96,15 +96,19 @@ function extractType(raw: string): string {
 }
 
 function extractRating(raw: string): string {
-  return raw
+  const cleaned = raw
     .replace(/\s*Pembaca/gi, "")
     .replace(/\s*\|?\s*Warna/gi, "")
     .replace(/\s*\|?\s*Berwarna/gi, "")
     .replace(/\s*\|?\s*Ber(\s|$)/gi, "")
     .replace(/\d+\s+(detik|menit|jam|hari|minggu|bulan|tahun)\s+lalu/gi, "")
     .replace(/Kemarin/gi, "")
-    .replace(/\|/g, "")
+    .replace(/\|/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
+
+  const match = cleaned.match(/\d[\d.,]*\s*(?:jt|rb|k|m|juta|ribu)?/i);
+  return match?.[0]?.replace(/\s+/g, "") ?? cleaned;
 }
 
 function isValidImageUrl(url: string): boolean {
@@ -484,8 +488,12 @@ export class KomikuParser {
     // Rating
     let rating = "";
     const ratingText =
-      $("td.pembaca i").text().trim() || $(".vw").text().trim();
-    if (ratingText) rating = extractRating(ratingText);
+      [
+        main.find("#Informasi td.pembaca").first().text(),
+        main.find("td.pembaca").first().text(),
+        main.find(".vw").first().text(),
+      ].find((value) => value.trim()) ?? "";
+    if (ratingText.trim()) rating = extractRating(ratingText);
 
     return {
       href,

@@ -22,9 +22,13 @@
         v-if="comic.rating"
         class="absolute right-2 top-2 flex items-center gap-0.5 rounded-full bg-black/60 px-1.5 py-0.5 backdrop-blur-sm"
       >
-        <Icon name="lucide:star" size="10" class="text-warning" />
+        <Icon
+          :name="source === 'komiku' ? 'lucide:eye' : 'lucide:star'"
+          size="10"
+          class="text-warning"
+        />
         <span class="text-[10px] font-semibold text-warning">{{
-          comic.rating
+          source === "komiku" ? comic.rating : comic.rating
         }}</span>
       </div>
 

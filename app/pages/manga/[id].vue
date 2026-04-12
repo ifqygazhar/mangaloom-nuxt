@@ -51,7 +51,9 @@
 
         <!-- Info -->
         <div class="flex-1 space-y-3">
-          <h1 class="text-2xl font-extrabold leading-tight text-text-primary sm:text-3xl">
+          <h1
+            class="text-2xl font-extrabold leading-tight text-text-primary sm:text-3xl"
+          >
             {{ detail.title }}
           </h1>
 
@@ -68,8 +70,13 @@
               v-if="detail.rating"
               class="flex items-center gap-0.5 text-xs text-warning"
             >
-              <Icon name="lucide:star" size="12" />
-              {{ detail.rating }}
+              <Icon
+                :name="source === 'komiku' ? 'lucide:eye' : 'lucide:star'"
+                size="12"
+              />
+              {{
+                source === "komiku" ? getMaxValue(detail.rating) : detail.rating
+              }}
             </span>
           </div>
 
@@ -115,7 +122,11 @@
           >
             <NuxtLink
               v-if="firstChapter"
-              :to="buildReadRoute(source, firstChapter.href, { mangaHref: detail.href })"
+              :to="
+                buildReadRoute(source, firstChapter.href, {
+                  mangaHref: detail.href,
+                })
+              "
               class="inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-content shadow-lg shadow-accent/25 transition-all hover:scale-[1.02] hover:bg-accent-hover"
             >
               <Icon name="lucide:book-open" size="16" />
@@ -124,7 +135,11 @@
 
             <NuxtLink
               v-if="latestChapter"
-              :to="buildReadRoute(source, latestChapter.href, { mangaHref: detail.href })"
+              :to="
+                buildReadRoute(source, latestChapter.href, {
+                  mangaHref: detail.href,
+                })
+              "
               class="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary px-5 py-2 text-sm font-semibold text-text-primary transition-colors hover:bg-tertiary"
             >
               <Icon name="lucide:history" size="16" />
@@ -150,7 +165,9 @@ import type { ComicDetail } from "#lib/models/comic-detail";
 import { buildReadRoute, parseSourceRouteParam } from "~/composables/useSource";
 
 const route = useRoute();
-const routeParts = computed(() => parseSourceRouteParam(route.params.id as string));
+const routeParts = computed(() =>
+  parseSourceRouteParam(route.params.id as string),
+);
 const source = computed(() => routeParts.value.source);
 const id = computed(() => routeParts.value.id);
 
@@ -175,15 +192,15 @@ function handleBack() {
   if (window.history.state && window.history.state.back) {
     const backRoute = window.history.state.back;
     // If coming from read page, go home instead of back to read page
-    if (backRoute.startsWith('/read/')) {
-      navigateTo('/', { replace: true });
+    if (backRoute.startsWith("/read/")) {
+      navigateTo("/", { replace: true });
       return;
     }
     router.back();
     return;
   }
-  
-  navigateTo('/', { replace: true });
+
+  navigateTo("/", { replace: true });
 }
 
 const showFullDesc = ref(false);
