@@ -5,7 +5,7 @@
         <!-- Brand -->
         <div class="flex items-center gap-2">
           <div
-            class="flex size-7 items-center justify-center rounded-lg bg-accent text-sm font-bold text-white"
+            class="flex size-7 items-center justify-center rounded-lg bg-accent text-sm font-bold text-accent-content"
           >
             M
           </div>

@@ -116,7 +116,7 @@
             <NuxtLink
               v-if="firstChapter"
               :to="buildReadRoute(source, firstChapter.href, { mangaHref: detail.href })"
-              class="inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition-all hover:scale-[1.02] hover:bg-accent-hover"
+              class="inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-content shadow-lg shadow-accent/25 transition-all hover:scale-[1.02] hover:bg-accent-hover"
             >
               <Icon name="lucide:book-open" size="16" />
               Read First Chapter

@@ -6,7 +6,7 @@
       <!-- Logo -->
       <NuxtLink to="/" class="flex shrink-0 items-center gap-2">
         <div
-          class="flex size-8 items-center justify-center rounded-lg bg-accent font-bold text-white"
+          class="flex size-8 items-center justify-center rounded-lg bg-accent font-bold text-accent-content"
         >
           M
         </div>

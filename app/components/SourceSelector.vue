@@ -6,7 +6,7 @@
       class="flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200"
       :class="
         activeSourceId === source.id
-          ? 'bg-accent text-white shadow-lg shadow-accent/20 scale-[1.02]'
+          ? 'bg-accent text-accent-content shadow-lg shadow-accent/20 scale-[1.02]'
           : 'bg-secondary text-text-secondary hover:bg-tertiary hover:text-text-primary'
       "
       @click="setSource(source.id)"

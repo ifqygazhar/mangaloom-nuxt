@@ -39,7 +39,7 @@
       </p>
       <NuxtLink
         to="/browse"
-        class="mt-6 rounded-lg bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-hover"
+        class="mt-6 rounded-lg bg-accent px-6 py-2.5 text-sm font-semibold text-accent-content transition-colors hover:bg-accent-hover"
       >
         Browse Manga
       </NuxtLink>
@@ -86,7 +86,7 @@
         <div class="mt-4 flex items-center gap-2">
           <NuxtLink
             :to="buildReadRoute(item.source, item.chapterHref, { mangaHref: item.mangaHref })"
-            class="relative z-10 flex w-full items-center justify-center gap-2 rounded-lg bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
+            class="relative z-10 flex w-full items-center justify-center gap-2 rounded-lg bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-content"
           >
             <Icon name="lucide:book-open" size="16" />
             Continue Reading

@@ -49,7 +49,7 @@ import coverImageTwo from "../assets/cover/image2.png";
         <div class="flex flex-wrap gap-2 pt-1">
           <NuxtLink
             to="/browse"
-            class="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition-all hover:scale-[1.02] hover:bg-accent-hover hover:shadow-xl hover:shadow-accent/30"
+            class="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-content shadow-lg shadow-accent/25 transition-all hover:scale-[1.02] hover:bg-accent-hover hover:shadow-xl hover:shadow-accent/30"
           >
             <Icon name="lucide:compass" size="16" />
             Browse Now

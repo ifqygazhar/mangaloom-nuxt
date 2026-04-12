@@ -31,7 +31,7 @@
       <!-- Type badge -->
       <div
         v-if="comic.type"
-        class="absolute left-2 top-2 rounded-full bg-accent/80 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white backdrop-blur-sm"
+        class="absolute left-2 top-2 rounded-full bg-accent/80 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-accent-content backdrop-blur-sm"
       >
         {{ comic.type }}
       </div>

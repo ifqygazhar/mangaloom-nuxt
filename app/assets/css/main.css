@@ -12,6 +12,7 @@
   --color-accent: #FACC15;
   --color-accent-hover: #FDE047;
   --color-accent-muted: rgba(250, 204, 21, 0.15);
+  --color-accent-content: #1A1A1A; /* Dark color for text inside accent background */
 
   /* ── Text ─────────────────────────────────────────── */
   --color-text-primary: #F0F0F0;

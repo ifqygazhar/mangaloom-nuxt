@@ -37,7 +37,7 @@
               class="rounded-full px-3 py-1 text-xs font-medium transition-all"
               :class="
                 activeSourceId === source.id
-                  ? 'bg-accent text-white shadow-lg shadow-accent/25'
+                  ? 'bg-accent text-accent-content shadow-lg shadow-accent/25'
                   : 'bg-secondary text-text-secondary hover:bg-tertiary hover:text-text-primary'
               "
               @click="handleSourceSelect(source.id)"
