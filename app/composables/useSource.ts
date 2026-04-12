@@ -12,8 +12,6 @@ const SOURCES: SourceInfo[] = [
   { id: "shinigami", name: "Shinigami", language: "ID", icon: "flagpack:id" },
   { id: "mangaplus", name: "MangaPlus", language: "ID", icon: "flagpack:id" },
   { id: "komiku", name: "Komiku", language: "ID", icon: "flagpack:id" },
-  // { id: "ikiru", name: "Ikiru", language: "ID", icon: "flagpack:id" },
-  // { id: "komiklu", name: "Komiklu", language: "ID", icon: "flagpack:id" },
 ];
 
 function trimHrefSlashes(value: string): string {

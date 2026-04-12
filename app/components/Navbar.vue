@@ -66,5 +66,6 @@ const { activeSource, toggleMobileMenu } = useSource();
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "Browse", to: "/browse" },
+  { label: "History", to: "/history" },
 ];
 </script>

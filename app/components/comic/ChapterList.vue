@@ -50,7 +50,9 @@
         :class="
           isActiveChapter(chapter.href)
             ? 'bg-accent/10 text-accent hover:bg-accent/15'
-            : 'hover:bg-surface-hover'
+            : isReadChapter(chapter.href)
+              ? 'text-green-500/80 hover:bg-surface-hover'
+              : 'hover:bg-surface-hover'
         "
         @click="emit('select', chapter.href)"
       >
@@ -59,21 +61,25 @@
           :class="
             isActiveChapter(chapter.href)
               ? 'font-semibold text-accent'
-              : 'text-text-primary'
+              : isReadChapter(chapter.href)
+                ? 'text-green-500/80'
+                : 'text-text-primary'
           "
         >
           {{ chapter.title }}
         </span>
         <span
-          v-if="chapter.date || isActiveChapter(chapter.href)"
+          v-if="chapter.date || isActiveChapter(chapter.href) || isReadChapter(chapter.href)"
           class="ml-3 shrink-0 text-[11px]"
           :class="
             isActiveChapter(chapter.href)
               ? 'font-semibold text-accent'
-              : 'text-text-tertiary'
+              : isReadChapter(chapter.href)
+                ? 'text-green-500/60'
+                : 'text-text-tertiary'
           "
         >
-          {{ isActiveChapter(chapter.href) ? "Reading" : chapter.date }}
+          {{ isActiveChapter(chapter.href) ? "Reading" : isReadChapter(chapter.href) ? "Read" : chapter.date }}
         </span>
       </NuxtLink>
     </div>
@@ -83,6 +89,7 @@
 <script setup lang="ts">
 import type { Chapter } from "#lib/models/chapter";
 import { buildReadRoute, normalizeSourceHref } from "~/composables/useSource";
+import { useHistory } from "~/composables/useHistory";
 
 const props = withDefaults(
   defineProps<{
@@ -102,6 +109,14 @@ const props = withDefaults(
 const emit = defineEmits<{
   select: [href: string];
 }>();
+
+const { history } = useHistory();
+
+const isReadChapter = (href: string) => {
+  return history.value.some(
+    (h) => h.source === props.source && h.mangaHref === props.mangaHref && h.chapterHref === normalizeSourceHref(href).replace(/^\/+|\/+$/g, '')
+  );
+};
 
 const reversed = ref(false);
 const query = ref("");

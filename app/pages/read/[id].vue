@@ -319,10 +319,14 @@ import {
   parseSourceRouteParam,
 } from "~/composables/useSource";
 
+import { useHistory } from "~/composables/useHistory";
+
 definePageMeta({ layout: false });
 
 const route = useRoute();
 const router = useRouter();
+
+const { saveHistory } = useHistory();
 
 const routeParts = computed(() =>
   parseSourceRouteParam(route.params.id as string),
@@ -364,6 +368,19 @@ const { data: mangaDetail, pending: mangaPending } =
       watch: [source, mangaParam],
     },
   );
+
+// Save to history when chapter and manga detail are loaded
+watch([chapter, mangaDetail], ([newChapter, newMangaDetail]) => {
+  if (newChapter && newMangaDetail && mangaHref.value) {
+    saveHistory({
+      source: source.value,
+      mangaHref: mangaHref.value,
+      mangaTitle: newMangaDetail.title,
+      chapterHref: id.value,
+      chapterTitle: newChapter.title,
+    });
+  }
+});
 
 useHead({
   title: computed(() => chapter.value?.title ?? "Reading..."),

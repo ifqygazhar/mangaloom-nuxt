@@ -74,6 +74,7 @@ const { sources, activeSourceId, mobileMenuOpen, closeMobileMenu, setSource } =
 const navLinks = [
   { label: "Home", to: "/", icon: "lucide:home" },
   { label: "Browse", to: "/browse", icon: "lucide:library" },
+  { label: "History", to: "/history", icon: "lucide:history" },
   { label: "Search", to: "/search", icon: "lucide:search" },
 ];
 
