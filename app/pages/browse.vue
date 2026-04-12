@@ -51,48 +51,106 @@ const { activeSourceId, activeSource } = useSource();
 
 const route = useRoute();
 const order = ref((route.query.order as string) ?? "");
-const status = ref("");
-const type = ref("");
+const status = ref((route.query.status as string) ?? "");
+const type = ref((route.query.type as string) ?? "");
 const page = ref(1);
-
-// Reset page on filter/source change
-watch([order, status, type, activeSourceId], () => {
-  page.value = 1;
-});
-
-const apiUrl = computed(() => {
-  const params = new URLSearchParams();
-  if (order.value) params.set("order", order.value);
-  if (status.value) params.set("status", status.value);
-  if (type.value) params.set("type", type.value);
-  params.set("page", page.value.toString());
-  return `/api/manga/${activeSourceId.value}/newest?${params.toString()}`;
-});
-
-const {
-  data: comics,
-  pending,
-  error,
-} = useFetch<ComicItem[]>(apiUrl, {
-  watch: [apiUrl],
-});
-
+const comics = ref<ComicItem[]>([]);
+const pending = ref(false);
+const error = ref<Error | null>(null);
 const loadingMore = ref(false);
 
-async function loadMore() {
-  loadingMore.value = true;
-  try {
-    page.value++;
-    const newComics = await $fetch<ComicItem[]>(
-      `/api/manga/${activeSourceId.value}/newest?page=${page.value}`,
-    );
-    if (newComics.length > 0 && comics.value) {
-      comics.value = [...comics.value, ...newComics];
+let browseRequestId = 0;
+
+const browseFilters = computed(() => ({
+  source: activeSourceId.value,
+  order: order.value,
+  status: status.value,
+  type: type.value,
+}));
+
+function buildBrowseUrl(pageNumber: number) {
+  const params = new URLSearchParams();
+
+  if (browseFilters.value.order) params.set("order", browseFilters.value.order);
+  if (browseFilters.value.status) params.set("status", browseFilters.value.status);
+  if (browseFilters.value.type) params.set("type", browseFilters.value.type);
+
+  params.set("page", pageNumber.toString());
+
+  return `/api/manga/${browseFilters.value.source}/newest?${params.toString()}`;
+}
+
+function dedupeComics(items: ComicItem[]) {
+  const seen = new Set<string>();
+
+  return items.filter((item) => {
+    const key = item.href || item.title;
+    if (!key || seen.has(key)) {
+      return false;
     }
-  } catch {
-    // Silently handle
-  } finally {
-    loadingMore.value = false;
+
+    seen.add(key);
+    return true;
+  });
+}
+
+async function fetchBrowsePage(
+  pageNumber: number,
+  options: { append?: boolean } = {},
+) {
+  const requestId = ++browseRequestId;
+  const append = options.append ?? false;
+
+  error.value = null;
+
+  if (append) {
+    loadingMore.value = true;
+  } else {
+    pending.value = true;
+    comics.value = [];
   }
+
+  try {
+    const fetchedComics = await $fetch<ComicItem[]>(buildBrowseUrl(pageNumber));
+
+    if (requestId !== browseRequestId) {
+      return;
+    }
+
+    comics.value = append
+      ? dedupeComics([...comics.value, ...fetchedComics])
+      : fetchedComics;
+    page.value = pageNumber;
+  } catch (err) {
+    if (requestId !== browseRequestId) {
+      return;
+    }
+
+    if (!append) {
+      comics.value = [];
+    }
+
+    error.value = err as Error;
+  } finally {
+    if (requestId === browseRequestId) {
+      pending.value = false;
+      loadingMore.value = false;
+    }
+  }
+}
+
+await fetchBrowsePage(1);
+
+watch([order, status, type, activeSourceId], () => {
+  page.value = 1;
+  void fetchBrowsePage(1);
+});
+
+async function loadMore() {
+  if (pending.value || loadingMore.value) {
+    return;
+  }
+
+  await fetchBrowsePage(page.value + 1, { append: true });
 }
 </script>

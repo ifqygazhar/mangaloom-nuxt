@@ -48,7 +48,11 @@ const { activeSourceId, activeSource } = useSource();
 
 const query = ref("");
 const searchQuery = ref("");
+const results = ref<ComicItem[]>([]);
+const pending = ref(false);
+const error = ref<Error | null>(null);
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+let searchRequestId = 0;
 
 watch(query, (val) => {
   if (debounceTimer) clearTimeout(debounceTimer);
@@ -57,10 +61,39 @@ watch(query, (val) => {
   }, 400);
 });
 
-// Reset search when source changes
-watch(activeSourceId, () => {
-  if (searchQuery.value) {
-    searchQuery.value = searchQuery.value; // trigger refetch
+watch([searchQuery, activeSourceId], async ([nextQuery, nextSource]) => {
+  const requestId = ++searchRequestId;
+
+  error.value = null;
+  results.value = [];
+
+  if (!nextQuery) {
+    pending.value = false;
+    return;
+  }
+
+  pending.value = true;
+
+  try {
+    const data = await $fetch<ComicItem[]>(
+      `/api/manga/${nextSource}/search?q=${encodeURIComponent(nextQuery)}`,
+    );
+
+    if (requestId !== searchRequestId) {
+      return;
+    }
+
+    results.value = data;
+  } catch (err) {
+    if (requestId !== searchRequestId) {
+      return;
+    }
+
+    error.value = err as Error;
+  } finally {
+    if (requestId === searchRequestId) {
+      pending.value = false;
+    }
   }
 });
 
@@ -69,18 +102,7 @@ function handleSearch() {
   searchQuery.value = query.value.trim();
 }
 
-const {
-  data: results,
-  pending,
-  error,
-} = useFetch<ComicItem[]>(
-  () =>
-    searchQuery.value
-      ? `/api/manga/${activeSourceId.value}/search?q=${encodeURIComponent(searchQuery.value)}`
-      : "",
-  {
-    watch: [searchQuery, activeSourceId],
-    immediate: false,
-  },
-);
+onBeforeUnmount(() => {
+  if (debounceTimer) clearTimeout(debounceTimer);
+});
 </script>
