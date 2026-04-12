@@ -61,6 +61,15 @@ import coverImageTwo from "../assets/cover/image2.png";
             <Icon name="lucide:search" size="16" />
             Search
           </NuxtLink>
+          <a
+            href="https://play.google.com/store/apps/details?id=id.mangaloom.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 rounded-full border border-tertiary bg-secondary px-4 py-2 text-sm font-semibold text-text-secondary transition-all hover:border-accent/30 hover:text-text-primary"
+          >
+            <Icon name="lucide:smartphone" size="16" />
+            Get App
+          </a>
         </div>
       </div>
 

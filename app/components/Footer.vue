@@ -22,6 +22,14 @@
           >
             {{ link.label }}
           </NuxtLink>
+          <a
+            href="https://play.google.com/store/apps/details?id=id.mangaloom.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs text-text-tertiary transition-colors hover:text-text-secondary"
+          >
+            Download App
+          </a>
         </div>
 
         <!-- Copyright -->
