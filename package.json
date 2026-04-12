@@ -13,6 +13,7 @@
     "@nuxt/icon": "2.2.1",
     "@nuxt/image": "2.0.0",
     "@tailwindcss/vite": "^4.2.2",
+    "cheerio": "^1.2.0",
     "crypto-js": "^4.2.0",
     "node-html-parser": "^7.1.0",
     "nuxt": "^4.4.2",

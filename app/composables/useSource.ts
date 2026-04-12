@@ -11,6 +11,7 @@ interface SourceInfo {
 const SOURCES: SourceInfo[] = [
   { id: "shinigami", name: "Shinigami", language: "ID", icon: "flagpack:id" },
   { id: "mangaplus", name: "MangaPlus", language: "ID", icon: "flagpack:id" },
+  { id: "komiku", name: "komiku", language: "ID", icon: "flagpack:id" },
 ];
 
 function trimHrefSlashes(value: string): string {
