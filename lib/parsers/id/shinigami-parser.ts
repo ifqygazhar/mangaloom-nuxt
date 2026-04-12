@@ -5,11 +5,19 @@ import type { Genre } from "../../models/genre";
 import type { Chapter } from "../../models/chapter";
 import { ComicParser } from "../parser-base";
 import { ResultCache } from "../../utils/cache";
-import { helperMakeRequest } from "../../utils/http-client";
+
+type ShinigamiQueryValue = string | number | undefined;
+type ShinigamiQuery = Record<string, ShinigamiQueryValue>;
+type NitroLocalFetch = <T>(
+  request: string,
+  options?: {
+    query?: ShinigamiQuery;
+  },
+) => Promise<T>;
 
 export class ShinigamiParser extends ComicParser {
-  private static readonly BASE_API_URL =
-    "https://my-cors-proxy.zenth.workers.dev/?url=https://api.shngm.io/v1";
+  private static readonly API_BASE_URL = "https://api.shngm.io/v1/";
+  private static readonly PROXY_PATH = "/api/proxy/bypass";
   private static readonly STORAGE_URL = "https://storage.shngm.id";
   private static readonly DEFAULT_PAGE_SIZE = 24;
   private static readonly CHAPTER_PAGE_SIZE = 9999;
@@ -71,16 +79,58 @@ export class ShinigamiParser extends ComicParser {
     };
   }
 
+  private getLocalFetch(): NitroLocalFetch {
+    const localFetch = (globalThis as { $fetch?: NitroLocalFetch }).$fetch;
+
+    if (!localFetch) {
+      throw new Error("Nitro local fetch is not available");
+    }
+
+    return localFetch;
+  }
+
+  private buildApiUrl(path: string, query: ShinigamiQuery = {}): string {
+    const url = new URL(path, ShinigamiParser.API_BASE_URL);
+
+    for (const [key, value] of Object.entries(query)) {
+      if (value === undefined || value === "") {
+        continue;
+      }
+
+      url.searchParams.set(key, String(value));
+    }
+
+    return url.toString();
+  }
+
+  private async requestApi(
+    path: string,
+    query: ShinigamiQuery = {},
+  ): Promise<Record<string, unknown>> {
+    const localFetch = this.getLocalFetch();
+
+    return await localFetch<Record<string, unknown>>(
+      ShinigamiParser.PROXY_PATH,
+      {
+        query: {
+          url: this.buildApiUrl(path, query),
+          referer: this.baseUrl,
+        },
+      },
+    );
+  }
+
   /** Fetch all chapter pages for a manga */
   private async fetchAllChapters(mangaId: string): Promise<Chapter[]> {
     const cacheKey = `chapters-${mangaId}`;
     const cached = this.chapterCache.get(cacheKey);
     if (cached) return cached;
 
-    const chaptersUrl = `${ShinigamiParser.BASE_API_URL}/chapter/${mangaId}/list?page=1&page_size=${ShinigamiParser.CHAPTER_PAGE_SIZE}&sort_by=chapter_number&sort_order=asc`;
-    const chaptersData = await helperMakeRequest({
-      url: chaptersUrl,
-      baseUrl: this.baseUrl,
+    const chaptersData = await this.requestApi(`chapter/${mangaId}/list`, {
+      page: 1,
+      page_size: ShinigamiParser.CHAPTER_PAGE_SIZE,
+      sort_by: "chapter_number",
+      sort_order: "asc",
     });
 
     const chapterItems = Array.isArray(chaptersData["data"])
@@ -106,8 +156,12 @@ export class ShinigamiParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${ShinigamiParser.BASE_API_URL}/manga/list?page=1&page_size=${ShinigamiParser.DEFAULT_PAGE_SIZE}&sort=popularity&sort_order=desc`;
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi("manga/list", {
+      page: 1,
+      page_size: ShinigamiParser.DEFAULT_PAGE_SIZE,
+      sort: "popularity",
+      sort_order: "desc",
+    });
 
     const items = data["data"] as Record<string, unknown>[];
     const results = items.map((item) => this.convertToComicItem(item));
@@ -121,8 +175,12 @@ export class ShinigamiParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${ShinigamiParser.BASE_API_URL}/manga/list?page=1&page_size=${ShinigamiParser.DEFAULT_PAGE_SIZE}&sort=rating&sort_order=desc`;
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi("manga/list", {
+      page: 1,
+      page_size: ShinigamiParser.DEFAULT_PAGE_SIZE,
+      sort: "rating",
+      sort_order: "desc",
+    });
 
     const items = data["data"] as Record<string, unknown>[];
     const results = items.map((item) => this.convertToComicItem(item));
@@ -136,8 +194,12 @@ export class ShinigamiParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${ShinigamiParser.BASE_API_URL}/manga/list?page=${page}&page_size=${ShinigamiParser.DEFAULT_PAGE_SIZE}&sort=latest&sort_order=desc`;
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi("manga/list", {
+      page,
+      page_size: ShinigamiParser.DEFAULT_PAGE_SIZE,
+      sort: "latest",
+      sort_order: "desc",
+    });
 
     const items = data["data"] as Record<string, unknown>[];
     if (items.length === 0) throw new Error("Page not found");
@@ -152,8 +214,10 @@ export class ShinigamiParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${ShinigamiParser.BASE_API_URL}/manga/list?page=${page}&page_size=${ShinigamiParser.DEFAULT_PAGE_SIZE}`;
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi("manga/list", {
+      page,
+      page_size: ShinigamiParser.DEFAULT_PAGE_SIZE,
+    });
 
     const items = data["data"] as Record<string, unknown>[];
     if (items.length === 0) throw new Error("Page not found");
@@ -164,13 +228,15 @@ export class ShinigamiParser extends ComicParser {
   }
 
   async search(query: string): Promise<ComicItem[]> {
-    const encodedQuery = encodeURIComponent(query);
-    const cacheKey = `search-${encodedQuery}`;
+    const cacheKey = `search-${encodeURIComponent(query)}`;
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${ShinigamiParser.BASE_API_URL}/manga/list?q=${encodedQuery}&page=1&page_size=${ShinigamiParser.DEFAULT_PAGE_SIZE}`;
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi("manga/list", {
+      q: query,
+      page: 1,
+      page_size: ShinigamiParser.DEFAULT_PAGE_SIZE,
+    });
 
     const items = data["data"] as Record<string, unknown>[];
     if (items.length === 0) throw new Error("No results found");
@@ -181,13 +247,18 @@ export class ShinigamiParser extends ComicParser {
   }
 
   async fetchByGenre(genre: string, page: number = 1): Promise<ComicItem[]> {
-    const encodedGenre = encodeURIComponent(genre);
-    const cacheKey = `genre-${encodedGenre}-${page}`;
+    const cacheKey = `genre-${encodeURIComponent(genre)}-${page}`;
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${ShinigamiParser.BASE_API_URL}/manga/list?page=${page}&page_size=${ShinigamiParser.DEFAULT_PAGE_SIZE}&genre_include=${encodedGenre}&genre_include_mode=and&sort=popularity&sort_order=desc`;
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi("manga/list", {
+      page,
+      page_size: ShinigamiParser.DEFAULT_PAGE_SIZE,
+      genre_include: genre,
+      genre_include_mode: "and",
+      sort: "popularity",
+      sort_order: "desc",
+    });
 
     const items = data["data"] as Record<string, unknown>[];
     if (items.length === 0) throw new Error("Page not found");
@@ -211,47 +282,55 @@ export class ShinigamiParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    let url = `${ShinigamiParser.BASE_API_URL}/manga/list?page=${page}&page_size=${ShinigamiParser.DEFAULT_PAGE_SIZE}`;
+    const requestQuery: ShinigamiQuery = {
+      page,
+      page_size: ShinigamiParser.DEFAULT_PAGE_SIZE,
+    };
 
     if (order) {
       switch (order) {
         case "popular":
-          url += "&sort=popularity&sort_order=desc";
+          requestQuery["sort"] = "popularity";
+          requestQuery["sort_order"] = "desc";
           break;
         case "latest":
-          url += "&sort=latest&sort_order=desc";
+          requestQuery["sort"] = "latest";
+          requestQuery["sort_order"] = "desc";
           break;
         case "rating":
-          url += "&sort=rating&sort_order=desc";
+          requestQuery["sort"] = "rating";
+          requestQuery["sort_order"] = "desc";
           break;
         default:
-          url += "&sort=latest&sort_order=desc";
+          requestQuery["sort"] = "latest";
+          requestQuery["sort_order"] = "desc";
       }
     }
 
     if (status) {
       switch (status) {
         case "ongoing":
-          url += "&status=ongoing";
+          requestQuery["status"] = "ongoing";
           break;
         case "completed":
-          url += "&status=completed";
+          requestQuery["status"] = "completed";
           break;
         case "hiatus":
-          url += "&status=hiatus";
+          requestQuery["status"] = "hiatus";
           break;
       }
     }
 
     if (type) {
-      url += `&format=${encodeURIComponent(type)}`;
+      requestQuery["format"] = type;
     }
 
     if (genre) {
-      url += `&genre_include=${encodeURIComponent(genre)}&genre_include_mode=and`;
+      requestQuery["genre_include"] = genre;
+      requestQuery["genre_include_mode"] = "and";
     }
 
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi("manga/list", requestQuery);
 
     const items = data["data"] as Record<string, unknown>[];
     if (items.length === 0) throw new Error("Page not found");
@@ -336,8 +415,7 @@ export class ShinigamiParser extends ComicParser {
   }
 
   async fetchGenres(): Promise<Genre[]> {
-    const url = `${ShinigamiParser.BASE_API_URL}/genre/list`;
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi("genre/list");
 
     const items = data["data"] as Record<string, unknown>[];
     return items.map((item) => ({
@@ -351,8 +429,7 @@ export class ShinigamiParser extends ComicParser {
 
     const mangaId = href.replace(/\//g, "");
 
-    const url = `${ShinigamiParser.BASE_API_URL}/manga/detail/${mangaId}`;
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi(`manga/detail/${mangaId}`);
 
     const item = data["data"] as Record<string, unknown>;
 
@@ -406,8 +483,7 @@ export class ShinigamiParser extends ComicParser {
 
     const chapterId = href.replace(/\//g, "");
 
-    const url = `${ShinigamiParser.BASE_API_URL}/chapter/detail/${chapterId}`;
-    const data = await helperMakeRequest({ url, baseUrl: this.baseUrl });
+    const data = await this.requestApi(`chapter/detail/${chapterId}`);
 
     const responseData = data["data"] as Record<string, unknown>;
     const chapter = responseData["chapter"] as Record<string, unknown>;
