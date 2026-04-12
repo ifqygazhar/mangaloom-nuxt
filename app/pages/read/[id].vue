@@ -436,12 +436,17 @@ watch(isFullscreen, (fullscreen) => {
 });
 
 function handleBack() {
-  if (mangaDetailRoute.value) {
-    navigateTo(mangaDetailRoute.value);
+  if (window.history.state && window.history.state.back) {
+    router.back();
     return;
   }
 
-  router.back();
+  if (mangaDetailRoute.value) {
+    navigateTo(mangaDetailRoute.value, { replace: true });
+    return;
+  }
+
+  navigateTo('/', { replace: true });
 }
 
 async function toggleFullscreen() {

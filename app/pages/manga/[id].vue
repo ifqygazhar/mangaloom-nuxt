@@ -32,7 +32,7 @@
       <!-- Back button -->
       <button
         class="flex items-center gap-1 text-sm text-text-secondary transition-colors hover:text-text-primary"
-        @click="$router.back()"
+        @click="handleBack"
       >
         <Icon name="lucide:arrow-left" size="16" />
         Back
@@ -168,6 +168,23 @@ const {
 useHead({
   title: computed(() => detail.value?.title ?? "Loading..."),
 });
+
+const router = useRouter();
+
+function handleBack() {
+  if (window.history.state && window.history.state.back) {
+    const backRoute = window.history.state.back;
+    // If coming from read page, go home instead of back to read page
+    if (backRoute.startsWith('/read/')) {
+      navigateTo('/', { replace: true });
+      return;
+    }
+    router.back();
+    return;
+  }
+  
+  navigateTo('/', { replace: true });
+}
 
 const showFullDesc = ref(false);
 
