@@ -4,6 +4,8 @@ import { ShinigamiParser } from "#lib/parsers/id/shinigami-parser";
 import { MangaPlusParser } from "#lib/parsers/id/mangaplus-parser";
 import { KomikluParser } from "#lib/parsers/id/komiklu-parser";
 import { KomikuParser } from "#lib/parsers/id/komiku-parser";
+import { FlameComicParser } from "#lib/parsers/en/flamecomic-parser";
+import { MangaGoParser } from "#lib/parsers/en/mangago-parser";
 
 const parsers = new Map<string, ComicParser>();
 
@@ -31,6 +33,12 @@ export function getParser(source: string): ComicParser {
       break;
     case "komiklu":
       parser = new KomikluParser();
+      break;
+    case "flamecomic":
+      parser = new FlameComicParser();
+      break;
+    case "mangago":
+      parser = new MangaGoParser();
       break;
     default:
       throw createError({

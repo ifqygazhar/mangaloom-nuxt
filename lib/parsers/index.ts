@@ -13,6 +13,8 @@ export { IkiruParser } from './id/ikiru-parser';
 // English parsers
 export { BatotoParser } from './en/batoto-parser';
 export { MangaParkParser } from './en/mangapark-parser';
+export { FlameComicParser } from './en/flamecomic-parser';
+export { MangaGoParser } from './en/mangago-parser';
 
 // Library / base parsers
 export { NatsuParser } from './lib/natsu-parser';

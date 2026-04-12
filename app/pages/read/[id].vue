@@ -180,8 +180,8 @@
         class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3"
       >
         <NuxtLink
-          v-if="chapter.prev"
-          :to="buildReadRoute(source, chapter.prev, { mangaHref })"
+          v-if="prevChapterHref"
+          :to="buildReadRoute(source, prevChapterHref, { mangaHref })"
           class="flex items-center gap-1 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-white/80 backdrop-blur transition-colors hover:bg-white/20"
         >
           <Icon name="lucide:chevron-left" size="14" />
@@ -212,8 +212,8 @@
         </div>
 
         <NuxtLink
-          v-if="chapter.next"
-          :to="buildReadRoute(source, chapter.next, { mangaHref })"
+          v-if="nextChapterHref"
+          :to="buildReadRoute(source, nextChapterHref, { mangaHref })"
           class="flex items-center gap-1 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-white/80 backdrop-blur transition-colors hover:bg-white/20"
         >
           Next
@@ -316,6 +316,7 @@ import {
   buildMangaRoute,
   buildReadRoute,
   decodeSourceHref,
+  normalizeSourceHref,
   parseSourceRouteParam,
 } from "~/composables/useSource";
 
@@ -401,6 +402,32 @@ const latestChapter = computed(() => mangaDetail.value?.chapters[0]);
 const firstChapter = computed(() => {
   const chapters = mangaDetail.value?.chapters ?? [];
   return chapters.at(-1);
+});
+
+// Derive prev/next from chapter list when parser doesn't provide them.
+// Chapters are ordered newest-first, so:
+//   prev (older chapter) = currentIndex + 1
+//   next (newer chapter) = currentIndex - 1
+const currentChapterIndex = computed(() => {
+  if (!hasChapterList.value) return -1;
+  const chapters = mangaDetail.value!.chapters;
+  return chapters.findIndex(
+    (ch) => normalizeSourceHref(ch.href) === currentChapterHref.value,
+  );
+});
+const prevChapterHref = computed(() => {
+  if (chapter.value?.prev) return chapter.value.prev;
+  if (currentChapterIndex.value < 0) return "";
+  const chapters = mangaDetail.value!.chapters;
+  const prevIdx = currentChapterIndex.value + 1;
+  return prevIdx < chapters.length ? chapters[prevIdx].href : "";
+});
+const nextChapterHref = computed(() => {
+  if (chapter.value?.next) return chapter.value.next;
+  if (currentChapterIndex.value < 0) return "";
+  const chapters = mangaDetail.value!.chapters;
+  const nextIdx = currentChapterIndex.value - 1;
+  return nextIdx >= 0 ? chapters[nextIdx].href : "";
 });
 const mangaDetailRoute = computed(() => {
   if (!mangaHref.value) return "";
