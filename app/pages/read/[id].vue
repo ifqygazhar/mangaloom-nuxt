@@ -538,13 +538,11 @@ function proxyPanel(url: string): string {
 }
 
 onMounted(() => {
-  const element = readerRoot.value as
-    | (HTMLElement & {
-        webkitRequestFullscreen?: () => Promise<void> | void;
-      })
-    | null;
+  const doc = document as Document & {
+    webkitFullscreenEnabled?: boolean;
+  };
   fullscreenSupported.value = Boolean(
-    element?.requestFullscreen || element?.webkitRequestFullscreen,
+    doc.fullscreenEnabled ?? doc.webkitFullscreenEnabled ?? true,
   );
   syncFullscreenState();
   document.addEventListener("fullscreenchange", syncFullscreenState);
