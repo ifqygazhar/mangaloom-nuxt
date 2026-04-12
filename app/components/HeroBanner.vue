@@ -10,12 +10,10 @@ import coverImageTwo from "../assets/cover/image2.png";
       class="absolute inset-0 bg-linear-to-br from-accent/20 via-primary to-primary"
     />
     <div class="absolute inset-y-0 right-0 hidden w-2/5 lg:block">
-      <div class="absolute inset-y-6 right-10 w-52 overflow-hidden rounded-[2rem] opacity-10">
-        <img
-          :src="coverImageOne"
-          alt=""
-          class="h-full w-full object-cover"
-        />
+      <div
+        class="absolute inset-y-6 right-10 w-52 overflow-hidden rounded-[2rem] opacity-10"
+      >
+        <img :src="coverImageOne" alt="" class="h-full w-full object-cover" />
       </div>
     </div>
     <div
@@ -25,7 +23,9 @@ import coverImageTwo from "../assets/cover/image2.png";
       class="absolute -bottom-10 -left-10 size-48 rounded-full bg-accent/5 blur-2xl"
     />
 
-    <div class="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:p-8 lg:p-12">
+    <div
+      class="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:p-8 lg:p-12"
+    >
       <!-- Text content -->
       <div class="flex-1 space-y-3">
         <div class="flex items-center gap-2">
@@ -39,12 +39,17 @@ import coverImageTwo from "../assets/cover/image2.png";
           class="text-2xl font-extrabold leading-tight tracking-tight text-text-primary sm:text-3xl lg:text-4xl"
         >
           Discover Comics<br />
-          <span class="bg-linear-to-r from-accent to-accent-hover bg-clip-text text-transparent">
+          <span
+            class="bg-linear-to-r from-accent to-accent-hover bg-clip-text text-transparent"
+          >
             All in One Place
           </span>
         </h1>
-        <p class="max-w-md text-sm leading-relaxed text-text-secondary sm:text-base">
-          Read manga, manhwa, manhua and webtoons from multiple sources. Free and always updated.
+        <p
+          class="max-w-md text-sm leading-relaxed text-text-secondary sm:text-base"
+        >
+          Read manga, manhwa, manhua and webtoons from multiple sources. Free
+          and always updated.
         </p>
         <div class="flex flex-wrap gap-2 pt-1">
           <NuxtLink
@@ -65,7 +70,7 @@ import coverImageTwo from "../assets/cover/image2.png";
             href="https://play.google.com/store/apps/details?id=id.mangaloom.app"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-1.5 rounded-full border border-tertiary bg-secondary px-4 py-2 text-sm font-semibold text-text-secondary transition-all hover:border-accent/30 hover:text-text-primary"
+            class="inline-flex items-center gap-1.5 rounded-full bg-[#01875f] px-4 py-2 text-sm font-semibold text-white transition-all hover:scale-[1.02] hover:bg-[#01704d] hover:shadow-lg hover:shadow-[#01875f]/30"
           >
             <Icon name="mdi:google-play" size="16" />
             Get App
@@ -76,7 +81,9 @@ import coverImageTwo from "../assets/cover/image2.png";
       <!-- Decorative manga cards (desktop) -->
       <div class="hidden shrink-0 lg:block">
         <div class="relative h-56 w-44">
-          <div class="absolute inset-0 rounded-[1.75rem] bg-black/10 blur-2xl" />
+          <div
+            class="absolute inset-0 rounded-[1.75rem] bg-black/10 blur-2xl"
+          />
           <div
             class="absolute left-1 top-6 h-44 w-32 -rotate-9 overflow-hidden rounded-2xl border border-white/10 bg-secondary shadow-2xl shadow-black/30"
           >
@@ -85,7 +92,9 @@ import coverImageTwo from "../assets/cover/image2.png";
               alt=""
               class="h-full w-full object-cover"
             />
-            <div class="absolute inset-0 bg-linear-to-t from-black/35 via-transparent to-transparent" />
+            <div
+              class="absolute inset-0 bg-linear-to-t from-black/35 via-transparent to-transparent"
+            />
           </div>
           <div
             class="absolute right-0 top-0 h-[200px] w-[136px] rotate-6 overflow-hidden rounded-2xl border border-white/15 bg-tertiary shadow-2xl shadow-black/40"
@@ -95,7 +104,9 @@ import coverImageTwo from "../assets/cover/image2.png";
               alt=""
               class="h-full w-full object-cover"
             />
-            <div class="absolute inset-0 bg-linear-to-t from-black/25 via-transparent to-transparent" />
+            <div
+              class="absolute inset-0 bg-linear-to-t from-black/25 via-transparent to-transparent"
+            />
           </div>
         </div>
       </div>

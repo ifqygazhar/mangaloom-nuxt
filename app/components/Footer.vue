@@ -1,7 +1,9 @@
 <template>
   <footer class="border-t border-tertiary/50 bg-primary">
     <div class="mx-auto max-w-7xl px-4 py-8">
-      <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+      <div
+        class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between"
+      >
         <!-- Brand -->
         <div class="flex items-center gap-2">
           <div
@@ -26,7 +28,7 @@
             href="https://play.google.com/store/apps/details?id=id.mangaloom.app"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center gap-1 text-xs text-text-tertiary transition-colors hover:text-text-secondary"
+            class="flex items-center gap-1 rounded-md bg-[#01875f] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#01704d]"
           >
             <Icon name="mdi:google-play" size="14" />
             Download App

@@ -3,6 +3,9 @@
     <!-- Hero -->
     <HeroBanner />
 
+    <!-- Promo Banners -->
+    <PromoBanners />
+
     <!-- Source selector -->
     <SourceSelector />
 
@@ -42,30 +45,26 @@ useHead({ title: "Home" });
 
 const { activeSourceId } = useSource();
 
-const {
-  data: popular,
-  pending: popularPending,
-} = useFetch<ComicItem[]>(() => `/api/manga/${activeSourceId.value}/popular`, {
-  key: computed(() => `popular-${activeSourceId.value}`),
-  watch: [activeSourceId],
-});
-
-const {
-  data: recommended,
-  pending: recommendedPending,
-} = useFetch<ComicItem[]>(
-  () => `/api/manga/${activeSourceId.value}/recommended`,
+const { data: popular, pending: popularPending } = useFetch<ComicItem[]>(
+  () => `/api/manga/${activeSourceId.value}/popular`,
   {
-    key: computed(() => `recommended-${activeSourceId.value}`),
+    key: computed(() => `popular-${activeSourceId.value}`),
     watch: [activeSourceId],
   },
 );
 
-const {
-  data: newest,
-  pending: newestPending,
-} = useFetch<ComicItem[]>(() => `/api/manga/${activeSourceId.value}/newest`, {
-  key: computed(() => `newest-${activeSourceId.value}`),
+const { data: recommended, pending: recommendedPending } = useFetch<
+  ComicItem[]
+>(() => `/api/manga/${activeSourceId.value}/recommended`, {
+  key: computed(() => `recommended-${activeSourceId.value}`),
   watch: [activeSourceId],
 });
+
+const { data: newest, pending: newestPending } = useFetch<ComicItem[]>(
+  () => `/api/manga/${activeSourceId.value}/newest`,
+  {
+    key: computed(() => `newest-${activeSourceId.value}`),
+    watch: [activeSourceId],
+  },
+);
 </script>
