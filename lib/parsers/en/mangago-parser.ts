@@ -15,7 +15,9 @@ import { ResultCache } from "../../utils/cache";
  */
 export class MangaGoParser extends ComicParser {
   private static readonly DOMAIN = "mangago.me";
-  private static readonly BASE_URL = `https://proxy-bypass-cors.verifwebsitepro.workers.dev/?url=https://${MangaGoParser.DOMAIN}`;
+  private static readonly BASE_URL = `https://${MangaGoParser.DOMAIN}`;
+  private static readonly PROXY_URL =
+    "https://proxy-bypass-cors.verifwebsitepro.workers.dev";
 
   private listCache = new ResultCache<ComicItem[]>();
   private detailCache = new ResultCache<ComicDetail>();
@@ -44,6 +46,11 @@ export class MangaGoParser extends ComicParser {
     };
   }
 
+  /** Wrap a target URL through the CORS proxy */
+  private proxyUrl(targetUrl: string): string {
+    return `${MangaGoParser.PROXY_URL}/?url=${encodeURIComponent(targetUrl)}`;
+  }
+
   private toAbsoluteUrl(url: string): string {
     if (url.startsWith("http://") || url.startsWith("https://")) return url;
     if (url.startsWith("//")) return `https:${url}`;
@@ -70,16 +77,18 @@ export class MangaGoParser extends ComicParser {
     return url;
   }
 
-  /** Fetch HTML from a URL */
+  /** Fetch HTML from a URL (routed through CORS proxy) */
   private async fetchHtml(url: string): Promise<string> {
-    const res = await fetch(url, { headers: this.headers });
+    const proxied = this.proxyUrl(url);
+    const res = await fetch(proxied, { headers: this.headers });
     if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
     return res.text();
   }
 
-  /** Fetch raw text (for JS files) */
+  /** Fetch raw text for JS files (routed through CORS proxy) */
   private async fetchText(url: string): Promise<string> {
-    const res = await fetch(url, {
+    const proxied = this.proxyUrl(url);
+    const res = await fetch(proxied, {
       headers: {
         ...this.headers,
         Accept: "*/*",
@@ -291,7 +300,7 @@ export class MangaGoParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${MangaGoParser.BASE_URL}/genre/All/1/?s=9`;
+    const url = `${MangaGoParser.BASE_URL}/genre/All/1/?f=1&o=1&sortby=comment_count&e=`;
     const html = await this.fetchHtml(url);
     const items = this.parseListPage(html, false);
 
@@ -305,7 +314,7 @@ export class MangaGoParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${MangaGoParser.BASE_URL}/genre/All/1/?s=3`;
+    const url = `${MangaGoParser.BASE_URL}/genre/All/1/?f=1&o=1&sortby=views&e=`;
     const html = await this.fetchHtml(url);
     const items = this.parseListPage(html, false);
 
@@ -318,7 +327,7 @@ export class MangaGoParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${MangaGoParser.BASE_URL}/genre/All/${page}/?s=2`;
+    const url = `${MangaGoParser.BASE_URL}/genre/All/${page}/?f=1&o=1&sortby=views&e=`;
     const html = await this.fetchHtml(url);
     const items = this.parseListPage(html, false);
     if (items.length === 0) throw new Error("Page not found");
@@ -332,7 +341,7 @@ export class MangaGoParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${MangaGoParser.BASE_URL}/genre/All/${page}/?s=1`;
+    const url = `${MangaGoParser.BASE_URL}/genre/All/${page}/?f=1&o=1&sortby=comment_count&e=`;
     const html = await this.fetchHtml(url);
     const items = this.parseListPage(html, false);
     if (items.length === 0) throw new Error("Page not found");
@@ -360,7 +369,7 @@ export class MangaGoParser extends ComicParser {
     const cached = this.listCache.get(cacheKey);
     if (cached) return cached;
 
-    const url = `${MangaGoParser.BASE_URL}/genre/${encodeURIComponent(genre)}/${page}/?s=9`;
+    const url = `${MangaGoParser.BASE_URL}/genre/${encodeURIComponent(genre)}/${page}/?f=1&o=1&sortby=comment_count&e=`;
     const html = await this.fetchHtml(url);
     const items = this.parseListPage(html, false);
     if (items.length === 0) throw new Error("Page not found");

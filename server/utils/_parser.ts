@@ -37,9 +37,9 @@ export function getParser(source: string): ComicParser {
     case "flamecomic":
       parser = new FlameComicParser();
       break;
-    case "mangago":
-      parser = new MangaGoParser();
-      break;
+    // case "mangago":
+    //   parser = new MangaGoParser();
+    //   break;
     default:
       throw createError({
         statusCode: 400,
