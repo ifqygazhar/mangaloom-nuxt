@@ -17,7 +17,7 @@ type NitroLocalFetch = <T>(
 
 export class ShinigamiParser extends ComicParser {
   private static readonly API_BASE_URL = "https://api.shngm.io/v1/";
-  private static readonly PROXY_PATH = "/api/proxy/bypass";
+  private static readonly PROXY_PATH = `https://proxy-bypass-cors.verifwebsitepro.workers.dev/?url=${encodeURIComponent(this.API_BASE_URL)}`;
   private static readonly STORAGE_URL = "https://storage.shngm.id";
   private static readonly DEFAULT_PAGE_SIZE = 24;
   private static readonly CHAPTER_PAGE_SIZE = 9999;
