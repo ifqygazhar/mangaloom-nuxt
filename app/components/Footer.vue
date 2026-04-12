@@ -26,8 +26,9 @@
             href="https://play.google.com/store/apps/details?id=id.mangaloom.app"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-xs text-text-tertiary transition-colors hover:text-text-secondary"
+            class="flex items-center gap-1 text-xs text-text-tertiary transition-colors hover:text-text-secondary"
           >
+            <Icon name="mdi:google-play" size="14" />
             Download App
           </a>
         </div>
