@@ -141,7 +141,17 @@ async function fetchBrowsePage(
 
 await fetchBrowsePage(1);
 
-watch([order, status, type, activeSourceId], () => {
+// Reset filters when source changes (different sources have different filter options)
+watch(activeSourceId, () => {
+  order.value = "";
+  status.value = "";
+  type.value = "";
+  page.value = 1;
+  void fetchBrowsePage(1);
+});
+
+// Re-fetch when individual filters change (but NOT activeSourceId — handled above)
+watch([order, status, type], () => {
   page.value = 1;
   void fetchBrowsePage(1);
 });

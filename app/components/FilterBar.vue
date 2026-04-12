@@ -24,49 +24,66 @@
     >
       <!-- Sort -->
       <select
+        v-if="filterConfig.orders.length > 0"
         :value="modelOrder"
         class="rounded-lg border border-tertiary bg-secondary px-3 py-2 text-sm text-text-primary outline-none transition-colors focus:border-accent/50"
         @change="$emit('update:modelOrder', ($event.target as HTMLSelectElement).value)"
       >
         <option value="">Sort by</option>
-        <option value="popular">Popular</option>
-        <option value="latest">Latest</option>
-        <option value="rating">Rating</option>
-        <option value="alphabetical">A—Z</option>
+        <option
+          v-for="opt in filterConfig.orders"
+          :key="opt.value"
+          :value="opt.value"
+        >
+          {{ opt.label }}
+        </option>
       </select>
 
       <!-- Status -->
       <select
+        v-if="filterConfig.statuses.length > 0"
         :value="modelStatus"
         class="rounded-lg border border-tertiary bg-secondary px-3 py-2 text-sm text-text-primary outline-none transition-colors focus:border-accent/50"
         @change="$emit('update:modelStatus', ($event.target as HTMLSelectElement).value)"
       >
         <option value="">All Status</option>
-        <option value="ongoing">Ongoing</option>
-        <option value="completed">Completed</option>
-        <option value="hiatus">Hiatus</option>
+        <option
+          v-for="opt in filterConfig.statuses"
+          :key="opt.value"
+          :value="opt.value"
+        >
+          {{ opt.label }}
+        </option>
       </select>
 
       <!-- Type -->
       <select
+        v-if="filterConfig.types.length > 0"
         :value="modelType"
         class="rounded-lg border border-tertiary bg-secondary px-3 py-2 text-sm text-text-primary outline-none transition-colors focus:border-accent/50"
         @change="$emit('update:modelType', ($event.target as HTMLSelectElement).value)"
       >
         <option value="">All Types</option>
-        <option value="manga">Manga</option>
-        <option value="manhwa">Manhwa</option>
-        <option value="manhua">Manhua</option>
+        <option
+          v-for="opt in filterConfig.types"
+          :key="opt.value"
+          :value="opt.value"
+        >
+          {{ opt.label }}
+        </option>
       </select>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { getFilterConfig } from "~/utils/helper_filter";
+
+const props = defineProps<{
   modelOrder?: string;
   modelStatus?: string;
   modelType?: string;
+  source?: string;
 }>();
 
 defineEmits<{
@@ -74,6 +91,12 @@ defineEmits<{
   "update:modelStatus": [value: string];
   "update:modelType": [value: string];
 }>();
+
+const { activeSourceId } = useSource();
+
+const filterConfig = computed(() =>
+  getFilterConfig(props.source ?? activeSourceId.value),
+);
 
 const open = ref(false);
 </script>
