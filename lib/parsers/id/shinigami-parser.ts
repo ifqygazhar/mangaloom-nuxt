@@ -8,7 +8,8 @@ import { ResultCache } from "../../utils/cache";
 import { helperMakeRequest } from "../../utils/http-client";
 
 export class ShinigamiParser extends ComicParser {
-  private static readonly BASE_API_URL = "https://api.shngm.io/v1";
+  private static readonly BASE_API_URL =
+    "https://my-cors-proxy.zenth.workers.dev/?url=https://api.shngm.io/v1";
   private static readonly STORAGE_URL = "https://storage.shngm.id";
   private static readonly DEFAULT_PAGE_SIZE = 24;
   private static readonly CHAPTER_PAGE_SIZE = 9999;

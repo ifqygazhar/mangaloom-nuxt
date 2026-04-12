@@ -9,6 +9,7 @@ export default defineNuxtConfig({
   css: ["./app/assets/css/main.css"],
   alias: {
     "#lib": fileURLToPath(new URL("./lib", import.meta.url)),
+    preset: "cloudflare-pages",
   },
   nitro: {
     alias: {
