@@ -1,13 +1,32 @@
 <template>
   <div class="mx-auto max-w-5xl px-4 py-4 sm:py-6">
     <!-- Loading -->
-    <div v-if="pending" class="space-y-4">
-      <div class="flex flex-col gap-4 sm:flex-row">
+    <div v-if="pending" class="space-y-6">
+      <div class="flex flex-col gap-5 sm:flex-row">
         <div class="skeleton h-72 w-48 shrink-0 rounded-xl sm:h-80 sm:w-52" />
         <div class="flex-1 space-y-3">
           <div class="skeleton h-8 w-3/4 rounded-lg" />
           <div class="skeleton h-4 w-1/2 rounded" />
           <div class="skeleton h-20 w-full rounded-lg" />
+        </div>
+      </div>
+
+      <!-- ChapterList Skeleton -->
+      <div class="space-y-1">
+        <div class="flex items-center justify-between pb-2">
+          <div class="skeleton h-5 w-24 rounded" />
+          <div class="skeleton h-4 w-24 rounded" />
+        </div>
+        <div class="skeleton mb-2 h-10 w-full rounded-lg" />
+        <div class="space-y-0.5 rounded-xl bg-secondary p-1">
+          <div
+            v-for="i in 8"
+            :key="i"
+            class="flex items-center justify-between rounded-lg px-3 py-2.5"
+          >
+            <div class="skeleton h-5 w-48 max-w-[60%] rounded" />
+            <div class="skeleton h-3 w-16 rounded" />
+          </div>
         </div>
       </div>
     </div>
