@@ -176,7 +176,7 @@ const {
   pending,
   error,
 } = useFetch<ComicDetail>(
-  () => `/api/manga/${source.value}/detail/${id.value}`,
+  () => `/api/manga/${source.value}/detail/${encodeURIComponent(id.value)}`,
   {
     watch: [source, id],
   },
@@ -205,12 +205,12 @@ function handleBack() {
 
 const showFullDesc = ref(false);
 
-const PROXY_SOURCES = ["webtoon"];
+const PROXY_SOURCES = ["webtoon", "manhwatop"];
 
 const coverSrc = computed(() => {
   if (!detail.value?.thumbnail) return "";
   if (PROXY_SOURCES.includes(source.value)) {
-    return `/api/proxy/image?url=${encodeURIComponent(detail.value.thumbnail)}`;
+    return `/api/proxy/image?url=${encodeURIComponent(detail.value.thumbnail)}&source=${source.value}`;
   }
   return detail.value.thumbnail;
 });

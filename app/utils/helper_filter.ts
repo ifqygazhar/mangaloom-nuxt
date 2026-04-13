@@ -71,6 +71,17 @@ const mangagoFilter: SourceFilterConfig = {
   types: [],
 };
 
+const manhwatopFilter: SourceFilterConfig = {
+  orders: [
+    { label: "Latest", value: "latest" },
+    { label: "Popular", value: "popular" },
+    { label: "Newest", value: "newest" },
+    { label: "A—Z", value: "alphabetical" },
+  ],
+  statuses: [],
+  types: [],
+};
+
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 const filterConfigs: Record<string, SourceFilterConfig> = {
@@ -78,6 +89,7 @@ const filterConfigs: Record<string, SourceFilterConfig> = {
   komiku: komikuFilter,
   flamecomic: flamecomicFilter,
   mangago: mangagoFilter,
+  manhwatop: manhwatopFilter,
 };
 
 /** Default filter config used when a source is not registered */

@@ -5,7 +5,7 @@ import { MangaPlusParser } from "#lib/parsers/id/mangaplus-parser";
 import { KomikluParser } from "#lib/parsers/id/komiklu-parser";
 import { KomikuParser } from "#lib/parsers/id/komiku-parser";
 import { FlameComicParser } from "#lib/parsers/en/flamecomic-parser";
-import { MangaGoParser } from "#lib/parsers/en/mangago-parser";
+import { ManhwaTopParser } from "#lib/parsers/en/manhwatop-parser";
 
 const parsers = new Map<string, ComicParser>();
 
@@ -37,6 +37,9 @@ export function getParser(source: string): ComicParser {
     case "flamecomic":
       parser = new FlameComicParser();
       break;
+    // case "manhwatop":
+    //   parser = new ManhwaTopParser();
+    //   break;
     // case "mangago":
     //   parser = new MangaGoParser();
     //   break;

@@ -1,14 +1,17 @@
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const url = query.url as string;
+  const source = query.source as string | undefined;
 
   if (!url) {
     throw createError({ statusCode: 400, statusMessage: "Missing url parameter" });
   }
 
-  // Determine referer based on the image URL
+  // Determine referer based on the image URL or source parameter
   let referer = "";
-  if (url.includes("webtoons.com") || url.includes("webtoon.com")) {
+  if (source === "manhwatop" || url.includes("manhwatop")) {
+    referer = "https://manhwatop.com/";
+  } else if (url.includes("webtoons.com") || url.includes("webtoon.com")) {
     referer = "https://www.webtoons.com/id/";
   } else if (url.includes("komiku.org") || url.includes("komiku.co.id")) {
     referer = "https://komiku.org";

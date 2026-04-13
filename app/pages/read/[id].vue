@@ -336,7 +336,7 @@ const source = computed(() => routeParts.value.source);
 const id = computed(() => routeParts.value.id);
 
 const chapterUrl = computed(
-  () => `/api/manga/${source.value}/chapter/${id.value}`,
+  () => `/api/manga/${source.value}/chapter/${encodeURIComponent(id.value)}`,
 );
 
 const {
@@ -362,7 +362,7 @@ const { data: mangaDetail, pending: mangaPending } =
     async () => {
       if (!mangaParam.value) return null;
       return await $fetch<ComicDetail>(
-        `/api/manga/${source.value}/detail/${mangaParam.value}`,
+        `/api/manga/${source.value}/detail/${encodeURIComponent(mangaParam.value)}`,
       );
     },
     {
@@ -555,11 +555,11 @@ function handleKeydown(event: KeyboardEvent) {
   void toggleFullscreen();
 }
 
-const PROXY_SOURCES = ["webtoon"];
+const PROXY_SOURCES = ["webtoon", "manhwatop"];
 
 function proxyPanel(url: string): string {
   if (PROXY_SOURCES.includes(source.value)) {
-    return `/api/proxy/image?url=${encodeURIComponent(url)}`;
+    return `/api/proxy/image?url=${encodeURIComponent(url)}&source=${source.value}`;
   }
   return url;
 }

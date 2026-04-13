@@ -12,6 +12,12 @@ const SOURCES: SourceInfo[] = [
   { id: "shinigami", name: "Shinigami", language: "ID", icon: "flagpack:id" },
   { id: "komiku", name: "Komiku", language: "ID", icon: "flagpack:id" },
   // { id: "mangago", name: "Mangago", language: "EN", icon: "flagpack:us" },
+  // {
+  //   id: "manhwatop",
+  //   name: "ManhwaTop",
+  //   language: "EN",
+  //   icon: "flagpack:us",
+  // },
   {
     id: "flamecomic",
     name: "Flame Comic",
